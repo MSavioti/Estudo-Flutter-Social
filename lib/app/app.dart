@@ -1,4 +1,4 @@
-import 'package:estudo_social/app/pages/home_page.dart';
+import 'package:estudo_social/app/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 
 class App extends StatelessWidget {
@@ -9,6 +9,9 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
+      theme: ThemeData(
+          // primaryColor: Colors.orange,
+          ),
     );
   }
 }
