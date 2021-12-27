@@ -1,11 +1,28 @@
-import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
   final String _shareMessage = 'This is an example of a shared message!';
+  final String _downloadLink =
+      'https://i.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0';
+
+  Future<void> _download() async {
+    final _targetDirectory = await getApplicationDocumentsDirectory();
+    final _downloadPath = '${_targetDirectory.path}/image.jpg';
+    final dio = Dio();
+    final _response = await dio.download(_downloadLink, _downloadPath);
+    dio.close();
+    if (_response.statusCode == 200) {
+      await _share(_downloadPath);
+    }
+  }
+
+  Future<void> _share(String filePath) async {
+    Share.shareFiles([filePath], text: 'Example of file sharing!');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,25 +43,14 @@ class HomePage extends StatelessWidget {
                 child: Text('Share text'),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   try {
-                    final dir = Directory.current;
-
-                    Share.shareFiles(['${dir.path}assets/flutter_logo.png']);
+                    await _download();
                   } catch (e) {
                     print(e);
                   }
                 },
                 child: Text('Share a file'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Share.share(
-                    _shareMessage,
-                    subject: 'Subject test',
-                  );
-                },
-                child: Text('Share a file with text and a subject'),
               ),
             ],
           ),
